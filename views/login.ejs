@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <div class="container">
+    <div class="login-card">
+      <h2>Sign in or create account</h2>
+      <p class="login-text">
+        Manage requests, track tickets, and stay on top of your work with a clean CRM dashboard.
+      </p>
+
+      <p class="login-text" style="font-size: 0.85rem; margin-top: 4px; color: #9ca3af;">
+        New here? Fill in your details and we will create your account automatically the first time you sign in.
+      </p>
+
+      <% if (locals.error) { %>
+        <div class="error-message"><%= error %></div>
+      <% } %>
+
+      <form method="POST" action="/auth/login" class="login-form">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required placeholder="Enter your password">
+        </div>
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select id="role" name="role" required>
+            <option value="admin">Admin</option>
+            <option value="employee" selected>Employee</option>
+            <option value="client">Client</option>
+          </select>
+        </div>
+        <div class="button-group">
+          <button type="submit" class="login-button">Continue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+

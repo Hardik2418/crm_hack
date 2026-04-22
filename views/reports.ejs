@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <a href="/dashboard" class="sidebar-logo">ResolveX</a>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="sidebar-link">Dashboard</a>
+        <a href="/dashboard/create" class="sidebar-link">New Req</a>
+        <a href="/dashboard/board" class="sidebar-link">Board</a>
+        <a href="/dashboard/reports" class="sidebar-link sidebar-link-active">Reports</a>
+      </nav>
+    </aside>
+
+    <div class="dashboard-main">
+      <header class="top-navbar">
+        <div class="top-navbar-left">
+          <h1>Reports</h1>
+        </div>
+      </header>
+
+      <main>
+        <section class="reports-filters">
+          <form method="get" action="/dashboard/reports" class="reports-form">
+            <div class="reports-row">
+              <div>
+                <label for="from">From</label>
+                <input type="date" id="from" name="from" value="<%= filters.from %>">
+              </div>
+              <div>
+                <label for="to">To</label>
+                <input type="date" id="to" name="to" value="<%= filters.to %>">
+              </div>
+              <div>
+                <label for="owner">Owner</label>
+                <select id="owner" name="owner">
+                  <option value="">All</option>
+                  <% users.forEach(u => { %>
+                    <option value="<%= u._id %>" <% if (filters.owner === String(u._id)) { %>selected<% } %>><%= u.name %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            <div class="reports-row">
+              <div>
+                <label for="product">Product</label>
+                <input type="text" id="product" name="product" value="<%= filters.product %>">
+              </div>
+              <div>
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" value="<%= filters.city %>">
+              </div>
+              <div class="reports-actions">
+                <button type="submit">Apply</button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section class="reports-summary">
+          <div class="stats-grid">
+            <div class="stat-card stat-card-total">
+              <p class="stat-label">Total Leads</p>
+              <p class="stat-value"><%= summary.total %></p>
+            </div>
+            <div class="stat-card stat-card-completed">
+              <p class="stat-label">Closed / Resolved</p>
+              <p class="stat-value"><%= summary.completed %></p>
+            </div>
+            <div class="stat-card stat-card-open">
+              <p class="stat-label">Conversion %</p>
+              <p class="stat-value"><%= summary.conversionRate %>%</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="requests-table" style="margin-top:24px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>City</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>Created At</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% requests.forEach(r => { %>
+                <tr>
+                  <td><%= r.orderId || r.id %></td>
+                  <td><%= r.customerName || r.name %></td>
+                  <td><%= r.product || '-' %></td>
+                  <td><%= r.city || '-' %></td>
+                  <td><%= r.owner ? r.owner.name : '' %></td>
+                  <td><span class="status-pill status-<%= r.status.toLowerCase().replace(' ', '-') %>"><%= r.status %></span></td>
+                  <td><%= r.createdAt ? r.createdAt.toISOString().slice(0,10) : '' %></td>
+                </tr>
+              <% }); %>
+              <% if (requests.length === 0) { %>
+                <tr>
+                  <td colspan="7">No data for the selected filters.</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

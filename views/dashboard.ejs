@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <a href="/dashboard" class="sidebar-logo">ResolveX</a>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="sidebar-link sidebar-link-active">Dashboard</a>
+        <a href="/dashboard/create" class="sidebar-link">New Req</a>
+        <a href="/dashboard/board" class="sidebar-link">Board</a>
+        <a href="/dashboard/reports" class="sidebar-link">Reports</a>
+        <a href="/dashboard/import" class="sidebar-link">Import</a>
+      </nav>
+    </aside>
+
+    <div class="dashboard-main">
+      <header class="top-navbar">
+        <div class="top-navbar-left">
+          <h1><%= user && user.name ? user.name : 'Dashboard' %></h1>
+          <% if (user && user.role) { %>
+            <p class="navbar-role"><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></p>
+          <% } %>
+        </div>
+        <div class="top-navbar-right">
+          <div class="notification-button">
+            <a href="/notifications" class="btn">Notifications <sup class="notification-count"><%= unreadNotificationCount %></sup></a>
+          </div>
+          <a href="/logout">Logout</a>
+        </div>
+      </header>
+
+      <main>
+        <div class="horizontal-nav">
+          <div class="horizontal-nav-item">Leads</div>
+          <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search ...">
+          </div>
+          <div class="horizontal-nav-item">
+            <a href="/dashboard/create">+ Add</a>
+          </div>
+        </div>
+
+        <section class="stats-grid">
+          <div class="stat-card stat-card-total">
+            <div class="stat-card-header">
+              <span class="stat-icon">📊</span>
+              <p class="stat-label">Total Requests</p>
+            </div>
+            <p class="stat-value"><%= stats.total %></p>
+          </div>
+          <div class="stat-card stat-card-open">
+            <div class="stat-card-header">
+              <span class="stat-icon">🟡</span>
+              <p class="stat-label">Open</p>
+            </div>
+            <p class="stat-value"><%= stats.open %></p>
+          </div>
+          <div class="stat-card stat-card-in-progress">
+            <div class="stat-card-header">
+              <span class="stat-icon">🔵</span>
+              <p class="stat-label">In Progress</p>
+            </div>
+            <p class="stat-value"><%= stats.inProgress %></p>
+          </div>
+          <div class="stat-card stat-card-completed">
+            <div class="stat-card-header">
+              <span class="stat-icon">🟢</span>
+              <p class="stat-label">Completed</p>
+            </div>
+            <p class="stat-value"><%= stats.completed %></p>
+          </div>
+          <div class="stat-card stat-card-overdue">
+            <div class="stat-card-header">
+              <span class="stat-icon">🔴</span>
+              <p class="stat-label">Overdue</p>
+            </div>
+            <p class="stat-value"><%= stats.overdue %></p>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <div class="chart-header">
+            <h2>Requests Overview</h2>
+            <p class="chart-subtitle">Live stats for your request pipeline.</p>
+          </div>
+          <div class="chart-placeholder">
+            <canvas id="requestsChart"></canvas>
+          </div>
+        </section>
+
+        <div class="requests-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th>City</th>
+            <th>Owner</th>
+            <th>Next Follow-up</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% requests.forEach(request => { %>
+            <tr>
+              <td><%= request.orderId || request.id %></td>
+              <td><%= request.customerName || request.name %></td>
+              <td><%= request.product || '-' %></td>
+              <td><%= request.city || '-' %></td>
+              <td>
+                <img src="<%= request.owner.profileImage %>" alt="Profile" class="profile-image">
+                <%= request.owner.name %>
+              </td>
+              <td><%= request.nextFollowUpDate ? request.nextFollowUpDate.toISOString().slice(0, 10) : '' %></td>
+              <td><span class="status-pill status-<%= request.status.toLowerCase().replace(' ', '-') %>"><%= request.status %></span></td>
+              <td>
+                <div class="action-icons">
+                  <a href="/dashboard/<%= request._id %>/edit">
+                    <!-- Edit SVG -->
+                    <svg fill="#fff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 494.94 494.94" xml:space="preserve" stroke="#fff" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0" transform="translate(0,0), scale(1)"><rect x="0" y="0" width="494.94" height="494.94" rx="0" fill="#161616" strokewidth="0"></rect></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.9898719999999999"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M389.844,182.85c-6.743,0-12.21,5.467-12.21,12.21v222.968c0,23.562-19.174,42.735-42.736,42.735H67.157 c-23.562,0-42.736-19.174-42.736-42.735V150.285c0-23.562,19.174-42.735,42.736-42.735h267.741c6.743,0,12.21-5.467,12.21-12.21 s-5.467-12.21-12.21-12.21H67.157C30.126,83.13,0,113.255,0,150.285v267.743c0,37.029,30.126,67.155,67.157,67.155h267.741 c37.03,0,67.156-30.126,67.156-67.155V195.061C402.054,188.318,396.587,182.85,389.844,182.85z"></path> <path d="M483.876,20.791c-14.72-14.72-38.669-14.714-53.377,0L221.352,229.944c-0.28,0.28-3.434,3.559-4.251,5.396l-28.963,65.069 c-2.057,4.619-1.056,10.027,2.521,13.6c2.337,2.336,5.461,3.576,8.639,3.576c1.675,0,3.362-0.346,4.96-1.057l65.07-28.963 c1.83-0.815,5.114-3.97,5.396-4.25L483.876,74.169c7.131-7.131,11.06-16.61,11.06-26.692 C494.936,37.396,491.007,27.915,483.876,20.791z M466.61,56.897L257.457,266.05c-0.035,0.036-0.055,0.078-0.089,0.107 l-33.989,15.131L238.51,247.3c0.03-0.036,0.071-0.055,0.107-0.09L447.765,38.058c5.038-5.039,13.819-5.033,18.846,0.005 c2.518,2.51,3.905,5.855,3.905,9.414C470.516,51.036,469.127,54.38,466.61,56.897z"></path> </g> </g> </g></svg>
+                  </a>
+                  <form action="/dashboard/<%= request._id %>/delete" method="POST" class="delete-form">
+                    <button type="submit">
+                      <svg width="24px" height="24px" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"><rect x="0" y="0" width="24.00" height="24.00" rx="0" fill="#161616" strokewidth="0"></rect></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 12V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 12V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 10V18C6 19.6569 7.34315 21 9 21H15C16.6569 21 18 19.6569 18 18V10" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+        </div>  
+
+        <section class="followup-buckets">
+          <h2 style="margin-bottom:12px;">Follow-up Buckets</h2>
+          <div class="followup-grid">
+            <div class="followup-column">
+              <h3>Overdue</h3>
+              <ul>
+                <% overdueLeads.forEach(lead => { %>
+                  <li>
+                    <strong><%= lead.orderId || lead.id %></strong> - <%= lead.customerName || lead.name %>
+                    <span class="pill pill-danger"><%= lead.nextFollowUpDate ? lead.nextFollowUpDate.toISOString().slice(0,10) : '' %></span>
+                  </li>
+                <% }); %>
+                <% if (overdueLeads.length === 0) { %>
+                  <li class="empty">No overdue follow-ups.</li>
+                <% } %>
+              </ul>
+            </div>
+            <div class="followup-column">
+              <h3>Today</h3>
+              <ul>
+                <% todayLeads.forEach(lead => { %>
+                  <li>
+                    <strong><%= lead.orderId || lead.id %></strong> - <%= lead.customerName || lead.name %>
+                    <span class="pill pill-warning"><%= lead.nextFollowUpDate ? lead.nextFollowUpDate.toISOString().slice(0,10) : '' %></span>
+                  </li>
+                <% }); %>
+                <% if (todayLeads.length === 0) { %>
+                  <li class="empty">No follow-ups for today.</li>
+                <% } %>
+              </ul>
+            </div>
+            <div class="followup-column">
+              <h3>Upcoming (7 days)</h3>
+              <ul>
+                <% upcomingLeads.forEach(lead => { %>
+                  <li>
+                    <strong><%= lead.orderId || lead.id %></strong> - <%= lead.customerName || lead.name %>
+                    <span class="pill pill-info"><%= lead.nextFollowUpDate ? lead.nextFollowUpDate.toISOString().slice(0,10) : '' %></span>
+                  </li>
+                <% }); %>
+                <% if (upcomingLeads.length === 0) { %>
+                  <li class="empty">No upcoming follow-ups.</li>
+                <% } %>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="performance-section">
+          <h2 style="margin:24px 0 12px;">Team Performance</h2>
+          <div class="requests-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Owner</th>
+                  <th>Total Leads</th>
+                  <th>Closed / Resolved</th>
+                  <th>Conversion %</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% performance.forEach(p => { %>
+                  <tr>
+                    <td><%= p.ownerName %></td>
+                    <td><%= p.total %></td>
+                    <td><%= p.completed %></td>
+                    <td><%= p.conversionRate %>%</td>
+                  </tr>
+                <% }); %>
+                <% if (performance.length === 0) { %>
+                  <tr>
+                    <td colspan="4">No performance data yet.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer>
+    const statsData = <%- JSON.stringify(stats) %>;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('requestsChart');
+      if (ctx && window.Chart) {
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Open', 'In Progress', 'Completed', 'Overdue'],
+            datasets: [
+              {
+                label: 'Requests',
+                data: [statsData.open, statsData.inProgress, statsData.completed, statsData.overdue],
+                backgroundColor: [
+                  'rgba(250, 204, 21, 0.8)',
+                  'rgba(59, 130, 246, 0.8)',
+                  'rgba(34, 197, 94, 0.8)',
+                  'rgba(248, 113, 113, 0.9)'
+                ],
+                borderRadius: 8,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+            },
+            scales: {
+              x: {
+                ticks: { color: 'hsla(0, 0%, 100%, .7)' },
+                grid: { display: false },
+              },
+              y: {
+                ticks: { color: 'hsla(0, 0%, 100%, .5)' },
+                grid: { color: 'hsla(0, 0%, 100%, .06)' },
+                beginAtZero: true,
+                precision: 0,
+              },
+            },
+          },
+        });
+      }
+
+      const searchInput = document.getElementById('searchInput');
+      const requestsTableBody = document.querySelector('.requests-table tbody');
+
+      const statusClassFromValue = (status) => {
+        return status ? `status-pill status-${status.toLowerCase().replace(' ', '-')}` : 'status-pill';
+      };
+
+      const updateDashboard = (requests) => {
+        requestsTableBody.innerHTML = "";
+
+        requests.forEach((request) => {
+          const tr = document.createElement('tr');
+          const statusClass = statusClassFromValue(request.status);
+
+          tr.innerHTML = `
+          <td>${request.orderId || request.id}</td>
+          <td>${request.customerName || request.name}</td>
+          <td>${request.product || '-'}</td>
+          <td>${request.city || '-'}</td>
+          <td>
+            <img src="${request.owner.profileImage}" alt="Profile" class="profile-image">
+            ${request.owner.name}
+          </td>
+          <td>${request.nextFollowUpDate ? request.nextFollowUpDate.slice(0, 10) : ''}</td>
+          <td><span class="${statusClass}">${request.status}</span></td>
+          <td>
+            <div class="action-icons">
+              <a href="/dashboard/${request._id}/edit">
+                <!-- Edit SVG -->
+                <svg fill="#fff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 494.94 494.94" xml:space="preserve" stroke="#fff" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0" transform="translate(0,0), scale(1)"><rect x="0" y="0" width="494.94" height="494.94" rx="0" fill="#161616" strokewidth="0"></rect></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.9898719999999999"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M389.844,182.85c-6.743,0-12.21,5.467-12.21,12.21v222.968c0,23.562-19.174,42.735-42.736,42.735H67.157 c-23.562,0-42.736-19.174-42.736-42.735V150.285c0-23.562,19.174-42.735,42.736-42.735h267.741c6.743,0,12.21-5.467,12.21-12.21 s-5.467-12.21-12.21-12.21H67.157C30.126,83.13,0,113.255,0,150.285v267.743c0,37.029,30.126,67.155,67.157,67.155h267.741 c37.03,0,67.156-30.126,67.156-67.155V195.061C402.054,188.318,396.587,182.85,389.844,182.85z"></path> <path d="M483.876,20.791c-14.72-14.72-38.669-14.714-53.377,0L221.352,229.944c-0.28,0.28-3.434,3.559-4.251,5.396l-28.963,65.069 c-2.057,4.619-1.056,10.027,2.521,13.6c2.337,2.336,5.461,3.576,8.639,3.576c1.675,0,3.362-0.346,4.96-1.057l65.07-28.963 c1.83-0.815,5.114-3.97,5.396-4.25L483.876,74.169c7.131-7.131,11.06-16.61,11.06-26.692 C494.936,37.396,491.007,27.915,483.876,20.791z M466.61,56.897L257.457,266.05c-0.035,0.036-0.055,0.078-0.089,0.107 l-33.989,15.131L238.51,247.3c0.03-0.036,0.071-0.055,0.107-0.09L447.765,38.058c5.038-5.039,13.819-5.033,18.846,0.005 c2.518,2.51,3.905,5.855,3.905,9.414C470.516,51.036,469.127,54.38,466.61,56.897z"></path> </g> </g> </g></svg>
+              </a>
+              <form action="/dashboard/${request._id}/delete" method="POST" class="delete-form">
+                <button type="submit">
+                  <svg width="24px" height="24px" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"><rect x="0" y="0" width="24.00" height="24.00" rx="0" fill="#161616" strokewidth="0"></rect></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 12V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 12V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 10V18C6 19.6569 7.34315 21 9 21H15C16.6569 21 18 19.6569 18 18V10" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                </button>
+              </form>
+            </div>
+          </td>
+        `;
+          requestsTableBody.appendChild(tr);
+        });
+      };
+
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          const searchQuery = searchInput.value.trim();
+          if (searchQuery !== '') {
+            fetch(`/dashboard/search?q=${encodeURIComponent(searchQuery)}`)
+              .then((response) => response.json())
+              .then((data) => {
+                updateDashboard(data);
+              })
+              .catch((error) => {
+                console.error('Error fetching search results:', error);
+              });
+          } else {
+            updateDashboard(<%- JSON.stringify(requests) %>);
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

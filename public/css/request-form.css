@@ -1,0 +1,132 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Global styles */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #161616;
+  color: hsla(0, 0%, 100%, .4);
+}
+
+header {
+  background-color: #161616;
+  color: hsla(0, 0%, 100%, .4);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid hsla(0, 0%, 100%, .1);
+}
+
+header h1 {
+  margin: 0;
+}
+
+header a {
+  color: #fff;
+  text-decoration: none;
+}
+
+header h1:hover{
+  color: #C084FC;
+}
+
+header a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.horizontal-nav {
+  background-color: #161616;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 2px solid hsla(0, 0%, 100%, .1);
+}
+
+.horizontal-nav a{
+  color:#fff;
+  text-decoration: none;
+}
+
+.horizontal-nav-item {
+  color: #fff;
+  display: flex;
+  align-items: center; 
+}
+
+.horizontal-nav-item a {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  text-decoration: none;
+}
+
+a:hover {
+  color:rgba(216, 180, 254);
+}
+
+.container {
+  padding:20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+form {
+  width: 40%;
+}
+
+form div {
+  margin-bottom: 10px;
+}
+
+label {
+  color: #fff;
+  margin-bottom:  10px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid hsla(0, 0%, 100%, .1);
+  border-radius: 4px;
+  background-color: #1f1f1f;
+  color: #fff;
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 0l5 5 5-5'/%3E%3C/svg%3E"), linear-gradient(to bottom, #1f1f1f 0%, #1f1f1f 100%);
+  background-repeat: no-repeat, repeat;
+  background-position: right 10px top 50%, 0 0;
+  background-size: 10px auto, 100%;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center; 
+  margin-top: 20px;
+}
+
+button[type="submit"] {
+  background-color: #C084FC;
+  color: #fff;
+  border: none;
+  padding: 13px 30px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button[type="submit"]:hover {
+  background-color: #a66eeb;
+}

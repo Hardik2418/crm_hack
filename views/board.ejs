@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Board</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <a href="/dashboard" class="sidebar-logo">ResolveX</a>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="sidebar-link">Dashboard</a>
+        <a href="/dashboard/create" class="sidebar-link">New Req</a>
+        <a href="/dashboard/board" class="sidebar-link sidebar-link-active">Board</a>
+        <a href="/dashboard/reports" class="sidebar-link">Reports</a>
+      </nav>
+    </aside>
+
+    <div class="dashboard-main">
+      <header class="top-navbar">
+        <div class="top-navbar-left">
+          <h1>Lead Board</h1>
+        </div>
+        <div class="top-navbar-right">
+          <a href="/dashboard">Back to Dashboard</a>
+        </div>
+      </header>
+
+      <main>
+        <section class="kanban-board">
+          <div class="kanban-column">
+            <h2>Open</h2>
+            <% columns.open.forEach(card => { %>
+              <div class="kanban-card">
+                <div class="kanban-card-title"><%= card.orderId || card.id %> - <%= card.customerName || card.name %></div>
+                <div class="kanban-card-meta"><%= card.product || '-' %> • <%= card.city || '-' %></div>
+              </div>
+            <% }); %>
+            <% if (columns.open.length === 0) { %>
+              <p class="empty">No open leads.</p>
+            <% } %>
+          </div>
+
+          <div class="kanban-column">
+            <h2>In Progress</h2>
+            <% columns.inProgress.forEach(card => { %>
+              <div class="kanban-card">
+                <div class="kanban-card-title"><%= card.orderId || card.id %> - <%= card.customerName || card.name %></div>
+                <div class="kanban-card-meta"><%= card.product || '-' %> • <%= card.city || '-' %></div>
+              </div>
+            <% }); %>
+            <% if (columns.inProgress.length === 0) { %>
+              <p class="empty">No in-progress leads.</p>
+            <% } %>
+          </div>
+
+          <div class="kanban-column">
+            <h2>Resolved</h2>
+            <% columns.resolved.forEach(card => { %>
+              <div class="kanban-card">
+                <div class="kanban-card-title"><%= card.orderId || card.id %> - <%= card.customerName || card.name %></div>
+                <div class="kanban-card-meta"><%= card.product || '-' %> • <%= card.city || '-' %></div>
+              </div>
+            <% }); %>
+            <% if (columns.resolved.length === 0) { %>
+              <p class="empty">No resolved leads.</p>
+            <% } %>
+          </div>
+
+          <div class="kanban-column">
+            <h2>Closed</h2>
+            <% columns.closed.forEach(card => { %>
+              <div class="kanban-card">
+                <div class="kanban-card-title"><%= card.orderId || card.id %> - <%= card.customerName || card.name %></div>
+                <div class="kanban-card-meta"><%= card.product || '-' %> • <%= card.city || '-' %></div>
+              </div>
+            <% }); %>
+            <% if (columns.closed.length === 0) { %>
+              <p class="empty">No closed leads.</p>
+            <% } %>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

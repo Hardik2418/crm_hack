@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Import Leads</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <a href="/dashboard" class="sidebar-logo">ResolveX</a>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="sidebar-link">Dashboard</a>
+        <a href="/dashboard/create" class="sidebar-link">New Req</a>
+        <a href="/dashboard/board" class="sidebar-link">Board</a>
+        <a href="/dashboard/reports" class="sidebar-link">Reports</a>
+        <a href="/dashboard/import" class="sidebar-link sidebar-link-active">Import</a>
+      </nav>
+    </aside>
+
+    <div class="dashboard-main">
+      <header class="top-navbar">
+        <div class="top-navbar-left">
+          <h1>Import Leads from CSV</h1>
+        </div>
+      </header>
+
+      <main>
+        <section class="import-section">
+          <p style="margin-bottom:12px;color:#9ca3af;font-size:0.9rem;">
+            Expected CSV headers: <strong>customerName, customerEmail, customerPhone, product, city, ownerEmail, status, deadline, nextFollowUpDate</strong>
+          </p>
+          <form action="/dashboard/import" method="POST" enctype="multipart/form-data" class="import-form">
+            <input type="file" name="file" accept=".csv" required>
+            <button type="submit">Upload &amp; Import</button>
+          </form>
+
+          <% if (summary) { %>
+            <div class="import-summary">
+              <% if (summary.error) { %>
+                <p style="color:#fca5a5;">Error: <%= summary.error %></p>
+              <% } else { %>
+                <p>Imported: <strong><%= summary.imported %></strong> leads, Skipped: <strong><%= summary.skipped %></strong>.</p>
+              <% } %>
+            </div>
+          <% } %>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Request</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <% const isClient = origin === 'client'; %>
+        <% const isEmployee = origin === 'employee'; %>
+        <% if (isClient) { %>
+          <a href="/client/dashboard" class="sidebar-logo">ResolveX</a>
+          <a href="/client/dashboard" class="sidebar-link">My Requests</a>
+          <a href="/client/create" class="sidebar-link sidebar-link-active">Create Request</a>
+        <% } else if (isEmployee) { %>
+          <a href="/employee/dashboard" class="sidebar-logo">ResolveX</a>
+          <a href="/employee/dashboard" class="sidebar-link">My Dashboard</a>
+          <a href="/employee/create" class="sidebar-link sidebar-link-active">Create Request</a>
+          <a href="/notifications" class="sidebar-link">Notifications</a>
+        <% } else { %>
+          <a href="/dashboard" class="sidebar-logo">ResolveX</a>
+          <a href="/dashboard" class="sidebar-link">Dashboard</a>
+          <a href="/dashboard/create" class="sidebar-link sidebar-link-active">New Req</a>
+          <a href="/dashboard/board" class="sidebar-link">Board</a>
+          <a href="/dashboard/reports" class="sidebar-link">Reports</a>
+          <a href="/dashboard/import" class="sidebar-link">Import</a>
+        <% } %>
+      </nav>
+    </aside>
+
+    <div class="dashboard-main">
+      <header class="top-navbar">
+        <div class="top-navbar-left">
+          <h1>Create Request</h1>
+        </div>
+        <div class="top-navbar-right">
+          <% if (isClient) { %>
+            <a href="/client/dashboard">Back to My Requests</a>
+          <% } else if (isEmployee) { %>
+            <a href="/employee/dashboard">Back to My Dashboard</a>
+          <% } else { %>
+            <a href="/dashboard">Back to Dashboard</a>
+          <% } %>
+          <a href="/logout">Logout</a>
+        </div>
+      </header>
+
+      <main>
+        <div class="create-form-wrapper">
+          <div class="create-form-card">
+            <h2>New request</h2>
+            <p class="create-form-subtitle">Fill in the details below to create a new request. Order ID will be generated automatically (VH-YYYYMMDD-0001).</p>
+            <% const formAction = isClient ? '/client/create' : (isEmployee ? '/employee/create' : '/dashboard/create'); %>
+            <form action="<%= formAction %>" method="POST" class="create-form">
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="type">Type</label>
+                  <select id="type" name="type" required>
+                    <option value="Ticket">Ticket</option>
+                    <option value="Issue">Issue</option>
+                    <option value="Bug">Bug</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="tag">Tag</label>
+                  <select id="tag" name="tag" required>
+                    <option value="Feature">Feature</option>
+                    <option value="Fix">Fix</option>
+                    <option value="UI">UI</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Danger">Danger</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="customerName">Customer Name</label>
+                  <input type="text" id="customerName" name="customerName" required>
+                </div>
+                <div class="form-field">
+                  <label for="name">Title / Short Name</label>
+                  <input type="text" id="name" name="name" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="customerEmail">Customer Email</label>
+                  <input type="email" id="customerEmail" name="customerEmail">
+                </div>
+                <div class="form-field">
+                  <label for="customerPhone">Customer Phone</label>
+                  <input type="tel" id="customerPhone" name="customerPhone">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="product">Product</label>
+                  <input type="text" id="product" name="product">
+                </div>
+                <div class="form-field">
+                  <label for="city">City</label>
+                  <input type="text" id="city" name="city">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="owner">Owner</label>
+                  <select name="owner" id="owner" required>
+                    <option value="">Select Owner</option>
+                    <% users.forEach(user => { %>
+                      <option value="<%= user._id %>"><%= user.name %></option>
+                    <% }); %>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="status">Status</label>
+                  <select id="status" name="status" required>
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Closed">Closed</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="deadline">Deadline</label>
+                  <input type="date" id="deadline" name="deadline" required>
+                </div>
+                <div class="form-field">
+                  <label for="nextFollowUpDate">Next Follow-up</label>
+                  <input type="date" id="nextFollowUpDate" name="nextFollowUpDate">
+                </div>
+              </div>
+
+              <div class="create-form-actions">
+                <button type="submit">Create request</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

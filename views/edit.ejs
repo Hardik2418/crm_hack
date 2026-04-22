@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Lead</title>
+  <link rel="stylesheet" href="../../css/request-form.css">
+</head>
+<body>
+  <header>
+    <h1>ResolveX</h1>
+    <a href="/logout">Logout</a>
+  </header>
+
+  <main>
+    <div class="horizontal-nav">
+      <div class="horizontal-nav-item">Edit Request</div>
+      <div class="horizontal-nav-item">
+        <a href="<%= (basePath || '/dashboard') + '/dashboard' %>">
+          <!-- <svg width="20px" height="20px" viewBox="0 0 25.00 25.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"><rect x="0" y="0" width="25.00" height="25.00" rx="0" fill="#161616" strokewidth="0"></rect></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M3 21.32L21 3.32001" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M3 3.32001L21 21.32" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg> -->
+          Close
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+      <form action="<%= (basePath || '/dashboard') + '/' + request._id + '/edit' %>" method="POST">
+        <div>
+          <label>Order ID:</label>
+          <input type="text" value="<%= request.orderId || request.id %>" disabled>
+        </div>
+        <div>
+          <label for="type">Type:</label>
+          <select id="type" name="type" required>
+            <option value="Ticket" <% if (request.type === 'Ticket') { %> selected <% } %>>Ticket</option>
+            <option value="Issue" <% if (request.type === 'Issue') { %> selected <% } %>>Issue</option>
+            <option value="Bug" <% if (request.type === 'Bug') { %> selected <% } %>>Bug</option>
+          </select>
+        </div>
+        <div>
+          <label for="customerName">Customer Name:</label>
+          <input type="text" id="customerName" name="customerName" value="<%= request.customerName || '' %>">
+        </div>
+        <div>
+          <label for="name">Lead Title / Short Name:</label>
+          <input type="text" id="name" name="name" value="<%= request.name %>" required>
+        </div>
+        <div>
+          <label for="customerEmail">Customer Email:</label>
+          <input type="email" id="customerEmail" name="customerEmail" value="<%= request.customerEmail || '' %>">
+        </div>
+        <div>
+          <label for="customerPhone">Customer Phone:</label>
+          <input type="tel" id="customerPhone" name="customerPhone" value="<%= request.customerPhone || '' %>">
+        </div>
+        <div>
+          <label for="tag">Tag:</label>
+          <select id="tag" name="tag" required>
+            <option value="Feature" <% if (request.tag === 'Feature') { %> selected <% } %>>Feature</option>
+            <option value="Fix" <% if (request.tag === 'Fix') { %> selected <% } %>>Fix</option>
+            <option value="UI" <% if (request.tag === 'UI') { %> selected <% } %>>UI</option>
+            <option value="Urgent" <% if (request.tag === 'Urgent') { %> selected <% } %>>Urgent</option>
+            <option value="Danger" <% if (request.tag === 'Danger') { %> selected <% } %>>Danger</option>
+          </select>
+        </div>
+        <div>
+          <label for="product">Product:</label>
+          <input type="text" id="product" name="product" value="<%= request.product || '' %>">
+        </div>
+        <div>
+          <label for="city">City:</label>
+          <input type="text" id="city" name="city" value="<%= request.city || '' %>">
+        </div>
+        <div>
+          <label for="owner">Owner:</label>
+          <select name="owner" id="owner" required> <!-- Add 'required' attribute -->
+            <option value="">Select Owner</option> <!-- Add an initial blank option -->
+            <% users.forEach(user => { %>
+              <option value="<%= user._id %>" <% if (user._id.toString() === request.owner.toString()) { %>selected<% } %>>
+                <%= user.name %>
+              </option>
+            <% }); %>
+          </select>
+        </div>
+        <div>
+          <label for="deadline">Deadline:</label>
+          <input type="date" id="deadline" name="deadline" value="<%= request.deadline ? request.deadline.toISOString().split('T')[0] : '' %>" required>
+        </div>
+        <div>
+          <label for="nextFollowUpDate">Next Follow-up:</label>
+          <input type="date" id="nextFollowUpDate" name="nextFollowUpDate" value="<%= request.nextFollowUpDate ? request.nextFollowUpDate.toISOString().split('T')[0] : '' %>">
+        </div>
+        <div>
+          <label for="status">Status:</label>
+          <select id="status" name="status" required>
+            <option value="Open" <% if (request.status === 'Open') { %> selected <% } %>>Open</option>
+            <option value="In Progress" <% if (request.status === 'In Progress') { %> selected <% } %>>In Progress</option>
+            <option value="Resolved" <% if (request.status === 'Resolved') { %> selected <% } %>>Resolved</option>
+            <option value="Closed" <% if (request.status === 'Closed') { %> selected <% } %>>Closed</option>
+          </select>
+        </div>
+        <div class="button-container">
+          <button type="submit">Update</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

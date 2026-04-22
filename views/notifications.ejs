@@ -1,0 +1,107 @@
+<!-- views/notifications.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications - ResolveX</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/notifications.css">
+</head>
+
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <a href="<%= homePath %>" class="sidebar-logo">ResolveX</a>
+      <nav class="sidebar-nav">
+        <% if (user && user.role === 'admin') { %>
+          <a href="/dashboard" class="sidebar-link">Dashboard</a>
+        <% } else if (user && user.role === 'employee') { %>
+          <a href="/employee/dashboard" class="sidebar-link">My Dashboard</a>
+        <% } else if (user && user.role === 'client') { %>
+          <a href="/client/dashboard" class="sidebar-link">My Requests</a>
+        <% } %>
+        <a href="/notifications" class="sidebar-link sidebar-link-active">Notifications</a>
+      </nav>
+    </aside>
+
+    <div class="dashboard-main">
+      <header class="top-navbar">
+        <div class="top-navbar-left">
+          <h1>Notifications</h1>
+        </div>
+        <div class="top-navbar-right">
+          <a href="<%= homePath %>">Back to Home</a>
+          <a href="/logout">Logout</a>
+        </div>
+      </header>
+
+      <main>
+        <section class="notifications-section">
+          <% if (notifications.length === 0) { %>
+            <div class="notifications-empty">
+              <h2>No notifications</h2>
+              <p>You have no notifications.</p>
+            </div>
+          <% } else { %>
+            <ul class="notifications-list">
+              <% notifications.forEach(notification => { %>
+                <li id="<%= notification._id %>" class="notification-card <%= notification.read ? 'read' : 'unread' %>">
+                  <div class="notification-message">
+                    <%= notification.message %>
+                  </div>
+                  <div class="notification-actions">
+                    <% if (!notification.read) { %>
+                      <button class="mark-read-button" data-notification-id="<%= notification._id %>">
+                        Mark as read
+                      </button>
+                    <% } %>
+                    <button class="delete-button" onclick="deleteNotification('<%= notification._id %>')">
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              <% }); %>
+            </ul>
+          <% } %>
+        </section>
+      </main>
+    </div>
+  </div>
+  
+
+  <script>
+    // Function to delete a notification
+    function deleteNotification(notificationId) {
+      fetch(`/notifications/${notificationId}/delete`, { method: 'POST' })
+        .then(() => location.reload())
+        .catch((error) => {
+          console.error('Error deleting notification:', error);
+        });
+    }
+
+    // Function to mark a notification as read
+    const markReadButtons = document.querySelectorAll('.mark-read-button');
+
+    markReadButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const notificationId = button.getAttribute('data-notification-id');
+        markNotificationAsRead(notificationId);
+      });
+    });
+
+    async function markNotificationAsRead(notificationId) {
+      try {
+        await fetch(`/notifications/${notificationId}/read`, { method: 'POST' });
+        const notificationLi = document.getElementById(notificationId);
+        notificationLi.classList.remove('unread'); // Remove the 'unread' class
+        notificationLi.classList.add('read'); // Add the 'read' class
+        const markReadButton = notificationLi.querySelector('.mark-read-button');
+        markReadButton.style.display = 'none'; // Hide the "Mark as Read" button
+      } catch (error) {
+        console.error('Error marking notification as read:', error);
+      }
+    }
+  </script>
+</body>
+</html>

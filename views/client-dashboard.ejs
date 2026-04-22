@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Dashboard</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <a href="/client/dashboard" class="sidebar-logo">ResolveX</a>
+      <nav class="sidebar-nav">
+        <a href="/client/dashboard" class="sidebar-link sidebar-link-active">My Requests</a>
+      </nav>
+    </aside>
+
+    <div class="dashboard-main">
+      <header class="top-navbar">
+        <div class="top-navbar-left">
+          <h1>Hello, <%= user.name %></h1>
+          <% if (user && user.role) { %>
+            <p class="navbar-role"><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></p>
+          <% } %>
+        </div>
+        <div class="top-navbar-right">
+          <div class="notification-button">
+            <a href="/notifications" class="btn">Notifications <sup class="notification-count"><%= unreadNotificationCount %></sup></a>
+          </div>
+          <a href="/logout">Logout</a>
+        </div>
+      </header>
+
+      <main>
+        <section class="client-top-row">
+          <div class="client-welcome">
+            <h2>My requests</h2>
+            <p>Track status, see updates, and stay informed.</p>
+          </div>
+          <div class="client-quick-actions">
+            <a href="/client/dashboard" class="quick-action-btn">View all</a>
+            <a href="/client/dashboard?status=Open" class="quick-action-btn">Open</a>
+            <a href="/client/dashboard?status=In%20Progress" class="quick-action-btn">In progress</a>
+            <a href="/client/dashboard?status=Resolved" class="quick-action-btn">Completed</a>
+          </div>
+        </section>
+
+        <section class="stats-grid">
+          <div class="stat-card stat-card-total">
+            <div class="stat-card-header">
+              <span class="stat-icon">📋</span>
+              <p class="stat-label">Total requests</p>
+            </div>
+            <p class="stat-value"><%= stats.total %></p>
+          </div>
+          <div class="stat-card stat-card-open">
+            <div class="stat-card-header">
+              <span class="stat-icon">🟡</span>
+              <p class="stat-label">Open</p>
+            </div>
+            <p class="stat-value"><%= stats.open %></p>
+          </div>
+          <div class="stat-card stat-card-in-progress">
+            <div class="stat-card-header">
+              <span class="stat-icon">🔵</span>
+              <p class="stat-label">In progress</p>
+            </div>
+            <p class="stat-value"><%= stats.inProgress %></p>
+          </div>
+          <div class="stat-card stat-card-completed">
+            <div class="stat-card-header">
+              <span class="stat-icon">🟢</span>
+              <p class="stat-label">Completed</p>
+            </div>
+            <p class="stat-value"><%= stats.completed %></p>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <div class="chart-header">
+            <h2>Requests overview</h2>
+            <p class="chart-subtitle">How many of your requests are open, in progress, or completed.</p>
+          </div>
+          <div class="chart-placeholder">
+            <canvas id="clientRequestsChart"></canvas>
+          </div>
+        </section>
+
+        <section class="client-filters">
+          <form method="get" action="/client/dashboard" class="client-filters-form">
+            <div>
+              <label for="status">Status</label>
+              <select id="status" name="status">
+                <option value="All" <%= filters.status === 'All' ? 'selected' : '' %>>All</option>
+                <option value="Open" <%= filters.status === 'Open' ? 'selected' : '' %>>Open</option>
+                <option value="In Progress" <%= filters.status === 'In Progress' ? 'selected' : '' %>>In progress</option>
+                <option value="Resolved" <%= filters.status === 'Resolved' ? 'selected' : '' %>>Completed</option>
+              </select>
+            </div>
+            <div>
+              <label for="from">From</label>
+              <input type="date" id="from" name="from" value="<%= filters.from %>">
+            </div>
+            <div>
+              <label for="to">To</label>
+              <input type="date" id="to" name="to" value="<%= filters.to %>">
+            </div>
+            <div class="client-filters-actions">
+              <button type="submit">Apply</button>
+            </div>
+          </form>
+        </section>
+
+        <% if (requests.length === 0) { %>
+          <section class="empty-state">
+            <h2>No requests yet 😄</h2>
+            <p>When you create a request, it will appear here so you can track its progress.</p>
+            <a href="#" class="empty-state-cta">Create request</a>
+          </section>
+        <% } else { %>
+          <div class="requests-table" style="margin-top:24px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Title</th>
+                  <th>Owner</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% requests.forEach(request => { %>
+                  <tr>
+                    <td><%= request.orderId || request.id %></td>
+                    <td><%= request.customerName || request.name %></td>
+                    <td><%= request.owner ? request.owner.name : '' %></td>
+                    <td><span class="status-pill status-<%= request.status.toLowerCase().replace(' ', '-') %>"><%= request.status %></span></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+
+        <section class="client-activity">
+          <h2>Activity timeline</h2>
+          <ul class="activity-timeline">
+            <% if (activity && activity.length > 0) { %>
+              <% activity.forEach(item => { %>
+                <li class="activity-item">
+                  <div class="activity-dot"></div>
+                  <div class="activity-content">
+                    <p class="activity-title">
+                      <strong><%= item.orderId || item.id %></strong> - <%= item.customerName || item.name %>
+                    </p>
+                    <p class="activity-meta">
+                      Status: <%= item.status %> • <%= (item.updatedAt || item.createdAt) ? (item.updatedAt || item.createdAt).toISOString().slice(0, 16).replace('T', ' ') : '' %>
+                    </p>
+                  </div>
+                </li>
+              <% }); %>
+            <% } else { %>
+              <li class="activity-item activity-empty">No recent activity yet.</li>
+            <% } %>
+          </ul>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer>
+    const clientStats = <%- JSON.stringify(stats) %>;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('clientRequestsChart');
+      if (ctx && window.Chart) {
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Open', 'In Progress', 'Completed', 'Overdue'],
+            datasets: [
+              {
+                label: 'Requests',
+                data: [clientStats.open, clientStats.inProgress, clientStats.completed, clientStats.overdue],
+                backgroundColor: [
+                  'rgba(250, 204, 21, 0.8)',
+                  'rgba(59, 130, 246, 0.8)',
+                  'rgba(34, 197, 94, 0.8)',
+                  'rgba(248, 113, 113, 0.9)'
+                ],
+                borderRadius: 8,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+            },
+            scales: {
+              x: {
+                ticks: { color: 'hsla(0, 0%, 100%, .7)' },
+                grid: { display: false },
+              },
+              y: {
+                ticks: { color: 'hsla(0, 0%, 100%, .5)' },
+                grid: { color: 'hsla(0, 0%, 100%, .06)' },
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+    });
+  </script>
+</body>
+</html>
