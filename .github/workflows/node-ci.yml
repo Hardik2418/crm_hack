@@ -20,8 +20,8 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run App (Test Start)
-        run: |
-          node app.js &
-          sleep 5
-          echo "App started successfully"
+- name: Check Server
+  run: |
+    node app.js &
+    sleep 5
+    curl http://localhost:3000 || exit 1
