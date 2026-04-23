@@ -20,8 +20,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-- name: Check Server
-  run: |
-    node app.js &
-    sleep 5
-    curl http://localhost:3000 || exit 1
+      - name: Check Server
+        run: |
+          node app.js &
+          sleep 5
+          curl http://localhost:3000 || exit 1
+
+      - name: Build Docker Image
+        run: docker build -t crm-app .
