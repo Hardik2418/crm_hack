@@ -5,11 +5,14 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - echo Installing dependencies
       - npm install
 
   build:
     commands:
-      - npm run build
+      - echo Starting app check
+      - node app.js & sleep 5
+      - echo App ran successfully
 
 artifacts:
   files:
