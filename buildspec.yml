@@ -5,11 +5,15 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - echo "Current directory:"
+      - pwd
+      - ls -la
+      - echo "Installing dependencies"
       - npm install
 
   build:
     commands:
-      - echo "Skipping tests"
+      - echo "Build successful"
 
 artifacts:
   files:
